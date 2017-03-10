@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>AE4-135 Rotor/Wake Aerodynamics</title>
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/tudelft_simple.css" id="theme">
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+  <script src="js/plotly-latest.min.js"></script>
+  <!-- <script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script> -->
+
+<script src="js/plotsupportfunctions.js"></script>
+<script src="js/BEMmodel.js"></script>
+<script src="plots_of_functions\several_plots.js"></script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+</head>
+
+<body >
+  <div id="tudborder">
+    <img src="img/tud_logo_white.svg" width=80% style="position: absolute; left: 0; right: 0; bottom: 0; margin-left: auto; margin-right: auto;">
+  </div>
+  <div id="presentation", class="reveal">
+    <div class="slides">
+
+      <section>  <h1>BEM - Blade element momentum theory</h1>
+        <div style="width: 25%">
+          <img src="images/annulifinal2.svg" >
+        </div>
+        <p>Course Rotor and Wake Aerodynamics</p>
+      </section>
+
+      <section> <h2>Learning objectives</h2>
+        <p align="left"> To be able to program a BEM code for application to an horizontal axis wind turbine... </p>
+        <ul>
+          <li>... in steady, uniform, axial flow.</li>
+          <li>... implementing corrections for heavily loaded streamtubes.</li>
+          <li>... implementing corrections for finite number of blades in a finite tip speed ratio.</li>
+        </ul>
+      </section>
+
+      <section> <h2>How to use the arrow buttons?</h2>
+        <p align="justify">On the bottom right there are four directional arrows. </p>
+        <ul>
+          <li>Press on the right arrow to proceed to the next slide.</li>
+          <li>Press on the left arrow to go back to the previous slide.</li>
+          <li>Press on the down arrow for further detail on a topic.</li>
+          <li>Press on the up arrow to return to the top of a topic.</li>
+        </ul>
+      </section>
+
+      <section> <h2>The principle of BEM is to balance loads between streamtube and blade element</h2>
+      </section>
+
+
+      <section> <h2> Division of the actuator surface in actuating annuli </h2>
+        <div style="width: 50%; float:left">
+          <p> The figure on our right shows the equivalent actuator disk that represents</p>
+        </div>
+        <div style="width: 50%; float:left">
+          <img src="images/annulifinal.svg" height="100%">
+        </div>
+
+      </section>
+
+      <section>
+        <section> <h2>Calculate velocities and forces at the blade element</h2>
+
+          <div style="width: 50%; float:left">
+            <p align="left"> Velocity perceived at blade element: axial, tangential and total. </p>
+            <ul>
+              <li>$ V_{axial} = U_{rotor} =  U_\infty \left( 1-a \right) $</li>
+              <li>$ V_{tan} = \Omega r \left( 1+ a'\right)$</li>
+              <li>$ V_{p}  = \sqrt{V_{axial}^2 + V_{tan}^2 }  $</li>
+            </ul>
+            <p align="left"> Forces at blade element (two dimensional): lift, drag, axial and azimuthal. </p>
+            <ul>
+              <li>$ Lift = \frac{1}{2} c \rho V_{p}^2 C_{l{\left(\alpha\right)}} $</li>
+              <li>$ Drag = \frac{1}{2} c \rho V_{p}^2  C_{d{\left(\alpha\right)}} $</li>
+              <li>$ F_{azim} = Lift \sin{\Phi}- Drag \cos{\Phi}  $</li>
+              <li>$ F_{axial} = Lift \cos{\Phi} + Drag \sin{\Phi}  $</li>
+            </ul>
+          </div>
+
+          <div style="width: 50%; float:left">
+            <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" viewBox="0 0 512.71265 273.20493" id="svg2"> <defs id="defs4"> <marker refX="0" refY="0" orient="auto" id="Arrow1Lstart" style="overflow:visible"> <path d="M 0,0 5,-5 -12.5,0 5,5 0,0 z" transform="matrix(0.8,0,0,0.8,10,0)" id="path3782" style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none" /> </marker> <linearGradient id="linearGradient6258"> <stop id="stop6260" style="stop-color:#000000;stop-opacity:1" offset="0" /> <stop id="stop6262" style="stop-color:#000000;stop-opacity:0" offset="1" /> </linearGradient> <linearGradient id="linearGradient4817"> <stop id="stop4819" style="stop-color:#0000ff;stop-opacity:1" offset="0" /> </linearGradient> <marker refX="0" refY="0" orient="auto" id="Arrow2Lend" style="overflow:visible"> <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path3803" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /> </marker> <marker refX="0" refY="0" orient="auto" id="Arrow2Lend-9" style="overflow:visible"> <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path3803-4" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /> </marker> <marker refX="0" refY="0" orient="auto" id="marker5026" style="overflow:visible"> <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path5028" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /> </marker> <marker refX="0" refY="0" orient="auto" id="Arrow2Lend-7" style="overflow:visible"> <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path3803-5" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /> </marker> <marker refX="0" refY="0" orient="auto" id="Arrow2Lend-5" style="overflow:visible"> <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path3803-1" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" /> </marker> </defs> <metadata id="metadata7"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g transform="translate(5.0,-215.51382)" id="layer1"> <path d="m 507.16216,272.45892 -1.87947,0.25706 -3.15075,0.4268 -3.50613,0.43229 -3.78348,0.43526 -3.98127,0.43734 -4.10011,0.44213 -4.16199,0.44192 -4.18958,0.43706 -4.20081,0.42861 -4.19839,0.4188 -4.19919,0.40402 -4.19771,0.39472 -4.20123,0.38093 -4.19664,0.36625 -4.20075,0.35156 -4.19759,0.33857 -4.18873,0.32972 -4.18983,0.32561 -4.19335,0.32757 -4.18645,0.33959 -4.16487,0.35312 -4.14984,0.37995 -4.14341,0.40378 -4.13807,0.43031 -4.13533,0.45303 -4.13291,0.47752 -4.12142,0.49765 -4.09858,0.51724 -4.06598,0.54162 -4.0178,0.57204 -3.96386,0.60791 -3.90908,0.65482 -3.85435,0.71081 -3.80754,0.77844 -3.7739,0.8513 -3.74988,0.92282 -3.71936,0.99276 -3.68851,1.06053 -3.64356,1.13003 -3.59478,1.19727 -3.53162,1.26456 -3.45744,1.3333 -3.36923,1.39803 -3.26286,1.46441 -3.1386,1.52742 -2.99652,1.58304 -2.82402,1.62648 -2.62546,1.65328 -2.40074,1.66291 -2.15574,1.64293 -1.89902,1.59942 -1.64339,1.52924 -1.39798,1.44426 -1.17686,1.34906 -0.98168,1.25114 -0.81391,1.15573 -0.67192,1.06566 -0.55134,0.98271 -0.45083,0.9084 -0.36727,0.84087 -0.29722,0.77997 -0.23978,0.72465 -0.18625,0.67529 -0.13405,0.63337 -0.0882,0.59421 -0.0491,0.55797 -0.0239,0.52358 0.0262,0.49162 0.0709,0.45829 0.12523,0.43327 0.21434,0.41798 0.27087,0.41773 0.32867,0.41566 0.38235,0.41785 0.43746,0.42144 0.49967,0.42409 0.56584,0.42892 0.64265,0.43063 0.72979,0.43249 0.82787,0.43717 0.94053,0.4427 1.07403,0.44325 1.23073,0.44373 1.41286,0.43826 1.62506,0.4223 1.86592,0.39575 2.13137,0.35458 2.40875,0.29361 2.68467,0.21183 2.93873,0.11622 3.15869,0.007 3.33708,-0.10767 3.47842,-0.21824 3.58383,-0.32546 3.65936,-0.42667 3.72061,-0.52268 3.7593,-0.60936 3.79231,-0.68878 3.8131,-0.76586 3.82651,-0.83268 3.83171,-0.90046 3.83449,-0.96171 3.83184,-1.02152 3.82983,-1.07974 3.82337,-1.13633 3.81902,-1.19006 3.81536,-1.24262 3.80791,-1.29259 3.79848,-1.33834 3.78628,-1.38295 3.76752,-1.42306 3.73575,-1.45664 3.68868,-1.48927 3.62601,-1.52427 3.55553,-1.56928 3.49589,-1.63942 3.46782,-1.72544 3.47117,-1.81786 3.49746,-1.90948 3.54873,-1.99002 3.59148,-2.03258 3.61311,-2.03099 3.611,-2.01016 3.60518,-1.96975 3.60112,-1.92684 3.59718,-1.88097 3.59426,-1.83113 3.58441,-1.7736 3.57844,-1.70694 3.5713,-1.63903 3.5639,-1.5628 3.55378,-1.48091 3.54689,-1.39032 3.53903,-1.29921 3.51517,-1.20677 3.44666,-1.11301 3.27251,-1.02215 2.99062,-0.89029" id="path7505" style="fill:#ffb380;fill-opacity:1;stroke:none" /> <path d="m 95.207676,488.73274 0,-173.91269" id="path4223" style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> <path d="M 93.989601,314.29424 361.93012,313.39661" id="path4407" style="fill:none;stroke:#000000;stroke-width:1.05331504px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> <path d="M 96.477112,487.4633 360.51973,314.14023" id="path4591" style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> <path d="m 341.99574,476.08591 a 18.401344,7.1810126 0 1 1 -36.80269,0 18.401344,7.1810126 0 1 1 36.80269,0 z" id="path6266" style="fill:#f9f9f9" /> <path d="m 275.03291,402.78104 a 123.42365,119.83315 0 0 1 -1.71888,-32.35087" transform="translate(-41.290823,-56.550475)" id="path6270" style="fill:none;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow2Lend)" /> <path d="M 288.39618,438.65987 A 123.42365,119.83315 0 0 1 274.63038,400.6075" transform="translate(-40.160068,-51.912515)" id="path6270-9" style="fill:none;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow2Lend)" /> <text x="230.53275" y="371.67786" id="text3135" font-size = "12">$\alpha$</text> <path d="m 287.46041,292.89218 a 35.456249,37.700317 0 0 1 -4.56283,-22.18083" transform="matrix(5.7957524,0,0,5.0576886,-1482.33,-1054.8511)" id="path7100" style="fill:none;stroke:#000000;stroke-width:0.15477937;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow2Lend)" /> <text x="220.61707" y="335.56226" id="text3135-1" font-size = "12">$\beta$</text> <text x="150.04343" y="384.94174" id="text3135-1-7" font-size = "12">$\Phi$</text> <text x="46.471443" y="400.51596" id="text3135-1-7-4" font-size = "12">$U_\infty\left(1-a\right)$</text> <text x="151.70894" y="300.37946" id="text3135-1-7-4-0" font-size = "12">$\Omega r \left(1+ a' \right)$</text> <text x="225.64081" y="425.6409" id="text3135-9" font-size = "12">$V_{p}$</text> <path d="M 233.83173,347.2765 529.59969,266.93892" id="path4037" style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6, 1;stroke-dashoffset:0" /> <path d="m 360.25656,307.35 29.83579,-8.29771" id="path4777" style="fill:#008000;stroke:#007e00;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> <text x="312.32703" y="227.2399" id="text3135-1-7-4-2" font-size = "12">$Lift$</text> <text x="400.405" y="290.02924" id="text3135-1-7-4-2-6" font-size = "12">$Drag$</text> <g transform="matrix(-0.99996744,-0.00806991,-0.00806991,0.99996744,707.05682,33.965007)" id="g4981-7" style="fill:#0000ff;stroke:#007ee5;stroke-opacity:1"> <path d="m 344.2398,275.46637 30.96813,-0.043" id="path4777-6" style="fill:#0000ff;stroke:#007ee5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> </g> <text x="309.28845" y="289.4313" id="text3135-1-7-4-2-0" font-size = "12">$F_{azim}$</text> <text x="385.14832" y="233.58633" id="text3135-1-7-4-2-0-4" font-size = "12">$F_{axial}$</text> <path d="M 358.7968,307.9604 338.86509,223.06994" id="path4777-0" style="fill:#008000;stroke:#007e00;stroke-width:1.0651952px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> <g transform="matrix(0.01294647,-0.99991619,-0.99991619,-0.01294647,630.69539,653.65902)" id="g4981-7-0" style="fill:#0000ff;stroke:#007ee5;stroke-opacity:1"> <path d="m 344.2398,275.46637 73.15304,0.50319" id="path4777-6-1" style="fill:#0000ff;stroke:#007ee5;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend)" /> </g> </g> </svg>
+          </div>
+
+      <div style="width: 100%; float:left">
+        <p align="left"> Note that all forces are in 2D, and have dimensions $N/m$. </p>
+        <p align="left"> $C_l$ and $C_d$ can be retrieved from airfoil polar data, as a function of angle of attack $\alpha$. </p>
+        <p class="bottomcall">
+          Press bottom arrow to see an example of an airfoil polar.
+        </p>
+
+      </div>
+
+
+</section>
+<section><h2> Example of airfoil polar, with lift and drag coefficient as a function of angle of attack $C_{l{\left(\alpha\right)}}$ and $C_{d{\left(\alpha\right)}}$</h2>
+
+  <div id="polarcl_alpha_cd_alpha" style="width: 450px; float:left">  </div>
+  <script> plot_cl_alpha_cd("polarcl_alpha_cd_alpha") </script>
+
+
+
+
+  <div id="polarcl_cd" style="width: 450px; float:left">     </div>
+  <script> plot_cl_cd("polarcl_cd") </script>
+
+
+</section>
+
+
+
+</section>
+
+<section> <h2>Calculate the axial and azimuthal inductions using actuator disk momentum theory </h2>
+  <p> The axial induction $a$ is a function of the axial loading on the annulus. The thrust coefficient is given by </p>
+  <p> $C_T = \frac{F_{axial}N_{blades}}{\frac{1}{2}\rho U_\infty^2 A_a}  $</p>
+  <p> with $C_T=4 a \left( 1 -a  \right)$ and $a = \frac{1}{2}\left( 1 - \sqrt{1-C_T} \right)$</p>
+  <p> The azimuthal induction $a'$ is a function of the tangential loading on the annulus (torque), given by  $ \delta Q = F_{azim} r \delta r N_{blades} $</p>
+  <p>From momentum theory, we get  $\delta Q=\rho \left(2\pi r\delta r \right)U_{\infty}\left(1-a\right) \left(2\Omega a'r^{2}\right)$ </p>
+  <p>resulting in $a' \Omega r = \frac{F_{azim} N_{blades}}{2 \left(2\pi r \right)U_{\infty}\left(1-a\right) }$ and
+    $a'  = \frac{F_{azim} N_{blades}}{2 \left(2\pi r \right)U_{\infty}\left(1-a\right) \lambda \frac{r}{R} }$ </p>
+    <p>
+
+    </section>
+
+    <section> <!-- <h2>Correction for heavily loaded rotors </h2> -->
+      <section> <h2>Correction for heavily loaded rotors </h2>
+      <p>
+        Our original assumption of the relation between loading on the actuator and induction is given by the equations below.
+      </p>
+      <p>$C_T=4 a \left( 1 -a  \right)$</p>
+      <p>and</p>
+      <p>$a = \frac{1}{2}\left( 1 - \sqrt{1-C_T} \right)$</p>
+      <p>
+        Above a certain loading on the streamtube, the wake will enter "turbulent wake state" or even "vortex ring state".
+        The relations above are no longer valid, and should be corrected.
+      </p>
+      <p class="bottomcall">
+        Press bottom arrow to see Glauert's correction for heavily loaded rotors.
+      </p>
+
+    </section>
+
+    <section> <h2>Glauert's correction for heavily loaded rotors </h2>
+        <p>
+          One proposed correction was defined by Glauert, and it is given by the equations below.
+        </p>
+        <p>$
+          C_T= \left\{ {\begin{array}{*{20}{c}}
+          {4 a \left( 1 -a  \right) \rm{,~for~} a< 1- \frac{\sqrt{C_{T_1}}}{2} }\\
+          {C_{T_1}-4 \left(\sqrt{C_{T_1}} -1  \right) \left( 1 -a  \right)  \rm{,~for~} a \ge 1- \frac{\sqrt{C_{T_1}}}{2}  }
+
+          \end{array}} \right.
+          $
+        </p>
+        <p>$
+          a = \left\{ {\begin{array}{*{20}{c}}
+          { \frac{1}{2} - \frac{\sqrt{1-C_{T}}}{2} \rm{,~for~} C_T < C_{T_2} }\\
+          {1+\frac{C_T-C_{T_1} }{4\sqrt{C_{T_1}} - 4}  \rm{,~for~} C_T \ge C_{T_2}  }
+
+          \end{array}} \right.
+          $
+        </p>
+        <p>and</p>
+        <p>$C_{T_1}=1.816$ and $C_{T_2}= 2\sqrt{C_{T_1}} - C_{T_1}$</p>
+        <p class="bottomcall">
+          Press bottom arrow to see the implementation of the function.
+        </p>
+
+      </section>
+
+      <section> <h2>Plot of $C_T$ as a function of $a$ including Glauert's correction for heavily loaded rotors </h2>
+
+        <!-- <div>  align="center"  -->
+        <div class="plot">
+          <div id="chartContainer" style="width: 800px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+          <script> CT_function_a("chartContainer") </script>
+        </div>
+
+
+
+
+        <p class="bottomcall">
+          Press bottom arrow to see the source code of the function.
+        </p>
+
+      </section>
+      <section> <h2>Code for calculation of $C_T$ as a function of $a$ including Glauert's correction for heavily loaded rotors </h2>
+
+        <div align="center" >
+          <pre>
+            <code class="javascript">
+
+              function thrust_coefficient_from_induction_Gluert_correction(a) {
+                // calculates thrust coefficient as a function of induction factor a
+                var CT=[];
+                var CT1=1.816;
+                a1=1-Math.sqrt(CT1)/2;
+
+                for (var i = 0; i < a.length; i++) {
+                  if (a[i] < a1) {
+                    temp = 4*a[i]*(1-a[i]);
+                  } else {
+                    temp = CT1-4*(Math.sqrt(CT1)-1)*(1-a[i]);
+                  };
+                  CT.push(temp);
+                };
+                return CT;
+              };
+
+            </code>
+          </pre>
+        </div>
+
+      </section>
+    </section>
+
+    <section> <!-- Prandtl's correction for finite number of blades -->
+    <section> <h2>Correction for finite number of blades</h2>
+      <p>
+        The actuator disk model assumes an uniform distribution of loading over the actuator.
+        A finite number of blades leads to a concentration of loading on the blades, and the shedding of concentrated tip and root vortices.
+        The concentrated tip vortex will cause an increased induction at the tip and the root, which is also experienced over the remaining of the blade.</p>
+
+        <p class="bottomcall">
+          Press bottom arrow to see Prandtl's correction for finite number of blades.
+        </p>
+
+      </section>
+
+
+        <section> <h2>Prandtl's correction for finite number of blades </h2>
+          <p>
+            Prandtl proposed a tip and root correction of induction,
+            which increases induction as a function of the distance to the tip and root, and the proximity of the vortices to the blade, a function of the number of blades
+            and the local tip speed ratio. The tip and root corrections are given by the expressions:</p>
+            <p>$  f_{tip \left( \mu \right)}  =\frac{2}{\pi} \arccos{\left(  e^{ \left(-\frac{B}{2}  \left(\frac{1-\mu}{\mu}  \right) \sqrt{\left(1+\frac{\lambda^2 \mu^2}{\left(1 -a \right)^2}  \right)} \right)}    \right)}          $</p>
+            <p>$  f_{root \left( \mu \right)}  =\frac{2}{\pi} \arccos{\left(  e^{ \left(-\frac{B}{2}  \left(\frac{\mu-\mu_{root}}{\mu}  \right) \sqrt{\left(1+\frac{\lambda^2 \mu^2}{\left(1 -a \right)^2}  \right)} \right)}    \right)}          $</p>
+            <p>where $\mu = r/R$ (radial position r over radius R), and $\mu_{root}$ is the location of the root vortex </p>
+            <p>The tip and root effect are combined in a total correction $  f_{total \left( \mu \right)}   = f_{tip \left( \mu \right)} *  f_{root \left( \mu \right)}$</p>
+
+            <p> The corrected values of induction are given by  $a=\frac{a}{f_{total}}$ and $a'=\frac{a'}{f_{total}}$</p>
+
+            <p class="bottomcall">
+              Press bottom arrow to see the implementation of the function.
+            </p>
+
+          </section>
+
+          <section> <h2>Plot of Prandtl's correction for finite number of blades as a function of radial position. </h2>
+
+            <div align="center" >
+
+              <div id="chartContainer_Prantdl1" ><!-- Plotly chart will be drawn inside this DIV --></div>
+              <script>  clearBox("chartContainer_Prantdl1");
+              plot_Prandtl_correction("chartContainer_Prantdl1"); </script>
+            </div>
+
+
+
+
+            <p class="bottomcall">
+              Press bottom arrow to see the source code of the function.
+            </p>
+
+          </section>
+
+          <section> <h2>Code for Prandtl's correction for finite number of blades as a function of radial position. </h2>
+
+
+
+
+            <div align="center" >
+              <pre>
+                <code class="javascript">
+
+                  function calculatePrandtlTipRootCorrection(r_R, rootradius_R, tipradius_R, TSR, NBlades, axial_induction) {
+                    // applies Prandtl's tip and root correction to the induction vector aind
+                    var mu; // temp variabl
+                    var Ftip; // tip correction
+                    var Froot; // tip correction
+                    var result;
+                    var temp1;
+                    temp1 = -NBlades/2*(tipradius_R-r_R)/r_R*Math.sqrt( 1+ (Math.pow(TSR*r_R,2))/(Math.pow(1-axial_induction,2))   )
+                    Ftip = 2/Math.PI*Math.acos(Math.exp(temp1));
+                    if (isNaN(Ftip)) {
+                      Ftip = 0;
+                    };
+                    temp1 = NBlades/2*(rootradius_R-r_R)/r_R*Math.sqrt( 1+ (Math.pow(TSR*r_R,2))/(Math.pow(1-axial_induction,2))   )
+                    Froot = 2/Math.PI*Math.acos(Math.exp(temp1));
+                    if (isNaN(Froot)) {
+                      Froot = 0;
+                    };
+                    result= {Ftotal: (Froot*Ftip), Ftip: Ftip ,Froot: Froot};
+                    return result;
+                  }
+
+                </code>
+              </pre>
+            </div>
+
+          </section>
+        </section>
+
+
+        <section>
+
+          <section> <h2>Flowchart of the implementation of a BEM solution</h2>
+
+
+            <div style="width: 50%; float:left">
+              <p align="left">BEM assumes that all annuli are independent; we will solve each annulus independently. For each annulus, the iterative algorithm on the right is applied.</p>
+              <p align="left">Suggestion 1: initialize the iteration of by seeding the values of $a=0.3$ and $a'=0$.</p>
+              <p align="left">Suggestion 2: to help convergence: at each iteration $i$, correct the new values of induction by $a_i= 0.25a_i+0.75a_{i-1}$ and ${a'}_i= 0.25{a'}_i+0.75{a'}_{i-1}$.</p>
+              <p align="left">Suggestion 3: if required, bound axial induction to $a<0.95$.</p>
+              <p align="left">Suggestion 4: bound cases of "not a number" and "divide by zero".</p>
+
+            </div>
+
+            <div style="width: 50%; float:left">
+              <img src="images/flowchart1.svg" >
+            </div>
+
+            <div style="width: 100%; float:left">
+              <p class="bottomcall">
+                Press bottom arrow to see an example of code that represents this algorithm.
+              </p>
+
+            </div>
+           </section>
+            <section> <h2>Code for solution of BEM in one annulus. </h2>
+
+
+              <div align="center" >
+                <pre>
+                  <code class="hljs javascript hljs hljs" >
+
+                    function solveStreamtube(Uinf, r1_R, r2_R, rootradius_R, tipradius_R , Omega, Radius, NBlades ){
+                      // solve balance of momentum between blade element load and loading in the streamtube
+                      // input variables:
+                      //     Uinf - wind speed at infinity
+                      //     r1_R,r2_R - edges of blade element, in fraction of Radius ;
+                      //     rootradius_R, tipradius_R - location of blade root and tip, in fraction of Radius ;
+                      //     Radius is the rotor radius
+                      //     Omega -rotational velocity
+                      //     NBlades - number of blades in rotor
+
+                      // initialize properties of the blade element, variables for output and induction factors
+                      var r_R = (r1_R+r2_R)/2; //centroide
+                      var Area = Math.PI*(Math.pow(r2_R*Radius,2)-Math.pow(r1_R*Radius,2)); //  area streamtube
+                      var a = 0.3; // axial induction factor
+                      var anew; // temp new axial induction factor
+                      var aline = 0.; // tangential induction factor
+                      var Urotor; // axial velocity at rotor
+                      var Utan; // tangential velocity at rotor
+                      var loads; // normal and tangential loads 2D
+                      var load3D = [0 , 0]; // normal and tangential loads 3D
+                      var CT; //thrust coefficient at streamtube
+                      var Prandtl; // Prandtl tip correction
+
+                      // iteration cycle
+                      var Niterations =100; // maximum number of iterations
+                      var Erroriterations =0.00001; // error limit for iteration rpocess, in absolute value of induction
+                      for (var i = 0; i < Niterations; i++) {
+
+                        ///////////////////////////////////////////////////////////////////////
+                        // this is the block "Calculate velocity and loads at blade element"
+                        ///////////////////////////////////////////////////////////////////////
+                        Urotor = Uinf*(1-a); // axial velocity at rotor
+                        Utan = (1+aline)*Omega*r_R*Radius; // tangential velocity at rotor
+                        // calculate loads in blade segment in 2D (N/m)
+                        loads = loadBladeElement(Urotor, Utan, r_R);
+                        load3D[0] =loads[0]*Radius*(r2_R-r1_R)*NBlades; // 3D force in axial direction
+                        load3D[1] =loads[1]*Radius*(r2_R-r1_R)*NBlades; // 3D force in azimuthal/tangential direction (not used here)
+                        ///////////////////////////////////////////////////////////////////////
+                        //the block "Calculate velocity and loads at blade element" is done
+                        ///////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////
+                        // this is the block "Calculate new estimate of axial and azimuthal induction"
+                        ///////////////////////////////////////////////////////////////////////
+                        // calculate thrust coefficient at the streamtube
+                        CT = load3D[0]/(0.5*Area*Math.pow(Uinf,2));
+                        // calculate new axial induction, accounting for Glauert's correction
+                        anew = induction_from_thrust_coefficient_Gluert_correction([CT]);
+                        // correct new axial induction with Prandtl's correction
+                        Prandtl=calculatePrandtlTipRootCorrection(r_R, rootradius_R, tipradius_R, Omega*Radius/Uinf, NBlades, anew);
+                        if (Prandtl.Ftotal < 0.0001) { Prandtl.Ftotal = 0.0001; } // avoid divide by zero
+                        anew = anew/Prandtl.Ftotal; // correct estimate of axial induction
+                        a = 0.75*a+0.25*anew; // for improving convergence, weigh current and previous iteration of axial induction
+                        // calculate aximuthal induction
+                        aline = loads[1]*NBlades/(2*Math.PI*Uinf*(1-a)*Omega*2*Math.pow(r_R*Radius,2));
+                        aline =aline/Prandtl.Ftotal; // correct estimate of azimuthal induction with Prandtl's correction
+                        ///////////////////////////////////////////////////////////////////////////
+                        // end of the block "Calculate new estimate of axial and azimuthal induction"
+                        ///////////////////////////////////////////////////////////////////////
+
+                        // test convergence of solution, by checking convergence of axial induction
+                        if (Math.abs(a-anew) < Erroriterations) {
+                          i=Niterations; // converged solution, this is the last iteration
+                        }
+
+                      };
+
+                      // we have reached a solution or the maximum number of iterations
+                      // returns axial induction factor a, azimuthal induction factor a',
+                      // and radial position of evaluations and loads
+                      return [a , aline, r_R, loads[0] , loads[1]];
+                    };
+
+                  </code>
+                </pre>
+              </div>
+
+            </section>
+
+          </section>
+        </section>
+        <section>
+
+          <section>
+            <h2>Example of BEM solution of $a$ and $a'$. </h2>
+
+            <p id="message0">  Scroll the button below to change tip speed ratio  </p>
+            <p id="message1">   "Tip speed ratio = 6" </p>
+            <input type="range" oninput="myFunction(this.value)">
+            <div id="chartContainer_BEM1" style="width: 800px; height: 400px"; ><!-- Plotly chart will be drawn inside this DIV --></div>
+            <script>
+
+
+            function myFunction(val) {
+
+              var TSR = 4+val/100*4;
+              document.getElementById("message1").innerHTML = "Tip speed ratio = " +TSR.toFixed(2);
+              var r_Array = createArraySequence(0.2,0.01,1);
+              var results = solveBEMmodel(1, r_Array, TSR*0.02 , 50, 3);
+              plotBEM(results.r_R, results.a, results.aline, 'a' , "a'", "chartContainer_BEM1")
+            }
+
+            myFunction(50)
+            </script>
+
+            <p class="bottomcall">
+              Press bottom arrow to see other examples.
+            </p>
+
+          </section>
+
+          <section>
+            <h2>Example of BEM solution of $F_{axial}$ and $F_{azim}$, rotor loading and power. </h2>
+            <div  style="width: 100%; float:left "; >
+            <p>  Scroll the button below to change tip speed ratio. <span id="message_calculate_faxial_ftan_1"> Tip speed ratio = 6. </span> </p>
+            <input type="range" oninput="solveplotFaxial(this.value)">
+
+            </div>
+            <div id="chart_calculate_faxial_ftan_1_BEM1" style="width: 600px; height: 400px; float: left"; ><!-- Plotly chart will be drawn inside this DIV --></div>
+
+            <div  style="width: 300px; height:400px;  float: left"; >
+                <p align="left">    $~~~~C_T$= <span id="message_calculate_faxial_ftan_1_CTrotor" > 0 </span> </p>
+                <p align="left">    $~~~~C_{Protor}$= <span  id="message_calculate_faxial_ftan_1_CProtor" > 0 </span> </p>
+                <!-- <p align="left">    $~~~~C_{Pflow}$= <span id="message_calculate_faxial_ftan_1_CPflow" > 0 </span> </p> -->
+
+            </div>
+
+            <div  style="width: 100%; float:left "; >
+
+              <p>  Note: $F_{axial}$ and $F_{azim}$ are non-dimensioned by $\frac{1}{2} \rho U_\infty^2 R$  </p>
+
+            </div>
+
+            <script>
+
+
+            function solveplotFaxial(val) {
+
+              var TSR = 4+val/100*4;
+              document.getElementById("message_calculate_faxial_ftan_1").innerHTML = "Tip speed ratio = " +TSR.toFixed(2);
+              var r_Array = createArraySequence(0.2,0.01,1);
+              var results = solveBEMmodel(1, r_Array, TSR*0.02 , 50, 3);
+              var adim = 0.5*50;
+
+              plotFaxial(results.r_R, nondim(results.Fnorm, adim), nondim(results.Ftan, adim), 'Faxial' , "Fazim", "chart_calculate_faxial_ftan_1_BEM1")
+
+              var results2 = calculateCT_CProtor_CPflow(results.a,results.aline,results.Fnorm, results.Ftan, 1, r_Array, TSR*0.02 , 50, 3);
+              document.getElementById("message_calculate_faxial_ftan_1_CTrotor").innerHTML =  results2.CTrotor.toFixed(2);
+              document.getElementById("message_calculate_faxial_ftan_1_CProtor").innerHTML =  results2.CProtor.toFixed(4);
+              // document.getElementById("message_calculate_faxial_ftan_1_CPflow").innerHTML =  results2.CPflow.toFixed(4);
+
+
+
+
+
+            }
+
+            solveplotFaxial(50)
+            </script>
+
+          </section>
+
+
+
+        </section>
+
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+    Reveal.initialize({
+      history: true,
+
+      math: {
+        mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML',
+        config: 'TeX-MML-AM_CHTML'
+        // 'TeX-AMS_HTML-full'
+      },
+
+      dependencies: [
+        // { src: 'plugin/math/math.js', async: true }
+        // ,
+        {  src: 'plugin/mathsvg/math.js', async: true},
+        // { src: '/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      ]
+    });
+
+    // Shows the slide number using default formatting
+    Reveal.configure({ slideNumber: true });
+    // Slide number formatting can be configured using these variables:
+    //  "h.v":  horizontal . vertical slide number (default)
+    //  "h/v":  horizontal / vertical slide number
+    //    "c":  flattened slide number
+    //  "c/t":  flattened slide number / total slides
+    </script>
+
+  </body>
+  </html>
