@@ -115,7 +115,8 @@ function loadBladeElement(Vnorm, Vtan, r_R){
   var Drag = 0.5*Vmag2*cd*chord;
   var Fnorm = Lift*Math.cos(InflowAngle)+Drag*Math.sin(InflowAngle);
   var Ftan = Lift*Math.sin(InflowAngle)-Drag*Math.cos(InflowAngle);
-  var result = [Fnorm , Ftan];
+  var Gamma = 0.5*Math.sqrt(Vmag2)*cl*chord ; //
+  var result = [Fnorm , Ftan, Gamma];
   // console.log('Result ' + result)
 
   return result;
@@ -166,6 +167,7 @@ function solveBEMmodel(Uinf, r_Rarray, Omega, Radius, NBlades){
   var Fnorm = [];
   var Ftan = [];
   var temp;
+  var Gamma = []; // circulation
   for (var i = 0; i < (r_Rarray.length-1); i++) {
     temp=solveStreamtube(Uinf, r_Rarray[i], r_Rarray[i+1],r_Rarray[0], r_Rarray[r_Rarray.length-1] , Omega, Radius, NBlades )
     a_temp.push(temp[0]);
@@ -173,10 +175,11 @@ function solveBEMmodel(Uinf, r_Rarray, Omega, Radius, NBlades){
     r_R_temp.push(temp[2]);
     Fnorm.push(temp[3]);
     Ftan.push(temp[4]);
+    Gamma.push(temp[5]);
 
 
   }
-  results ={a: a_temp , aline: aline_temp, r_R: r_R_temp, Fnorm: Fnorm, Ftan: Ftan };
+  results ={a: a_temp , aline: aline_temp, r_R: r_R_temp, Fnorm: Fnorm, Ftan: Ftan , Gamma: Gamma};
   return results;
 };
 
@@ -252,7 +255,7 @@ function solveStreamtube(Uinf, r1_R, r2_R, rootradius_R, tipradius_R , Omega, Ra
   // we have reached a solution or the maximum number of iterations
   // returns axial induction factor a, azimuthal induction factor a',
   // and radial position of evaluations and loads
-  return [a , aline, r_R, loads[0] , loads[1]];
+  return [a , aline, r_R, loads[0] , loads[1], loads[2]];
 };
 
 

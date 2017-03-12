@@ -213,6 +213,44 @@ Plotly.newPlot(IDDIV, data, layout);
 
 
 
+function plotGamma(inputx, inputy1, name1, IDDIV) {
+
+
+  var trace1 = {
+    x: inputx,
+    y: inputy1,
+    mode: 'line',
+    name: name1
+  };
+
+  // var trace2 = {
+  //   x: inputx,
+  //   y: inputy2,
+  //   mode: 'line',
+  //   name: name2
+  // };
+
+  var data = [trace1];
+
+  var layout = {
+    // title: '$ \\rm{Thrust~coefficient~} C_T \\rm{~as~a~function~of~induction~factor~} a $',
+    xaxis: {title: 'r/R',
+    dtick: 0.1,
+    range: [0., 1.0],
+    autorange: false
+  },
+  yaxis: {
+    title: "",
+    range: [0., 1.2],
+    dtick: .1,
+    autorange: false
+  }
+};
+
+Plotly.newPlot(IDDIV, data, layout);
+};
+
+
 
 
 
