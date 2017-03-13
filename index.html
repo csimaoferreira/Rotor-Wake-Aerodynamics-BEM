@@ -501,8 +501,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
           <section>
             <h2>Example of BEM solution of $a$ and $a'$. </h2>
 
-            <p id="message0" text-align='center'>  Scroll the button below to change tip speed ratio  </p>
-            <p id="message1" text-align='center'>   "Tip speed ratio = 6" </p>
+            <p style ='text-align: center'>  Scroll the button below to change tip speed ratio. <span id="message1"> Tip speed ratio = 6. </span> </p>
             <input type="range" oninput="myFunction(this.value)">
             <div id="chartContainer_BEM1" style="width: 800px; height: 400px"; ><!-- Plotly chart will be drawn inside this DIV --></div>
             <script>
