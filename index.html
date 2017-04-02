@@ -45,11 +45,11 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
     <div class="slides">
 
       <section>  <h1>BEM - Blade element momentum theory</h1>
-        <div style="width: 25%; float: left">
-          <img src="images/annulifinal2.svg" >
+        <div style="width: 45%; float: left">
+          <img src="images/annulifinal2.svg" height="50%" width="50%" >
         </div>
-        <div style="width: 74%; float: left">
-          <p>Course Rotor and Wake Aerodynamics</p>
+        <div style="width: 55%; float: left">
+          <p>Course AE4-135 Rotor and Wake Aerodynamics</p>
         </div>
         <div style="width: 100%; float: left">
         <p class="bottomcall">
@@ -398,7 +398,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </div>
 
             <div style="width: 50%; float:left">
-              <img src="images/flowchart1.svg" >
+              <img src="images/flowchart1.svg" height="400" width="400">
             </div>
 
             <div style="width: 100%; float:left">
@@ -502,13 +502,13 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             <h2>Example of BEM solution of $a$ and $a'$. </h2>
 
             <p style ='text-align: center'>  Scroll the button below to change tip speed ratio. <span id="message1"> Tip speed ratio = 6. </span> </p>
-            <input type="range" oninput="myFunction(this.value)">
+            <input type="range" onchange="myFunction(this.value)">
             <div id="chartContainer_BEM1" style="width: 800px; height: 400px"; ><!-- Plotly chart will be drawn inside this DIV --></div>
             <script>
 
 
             function myFunction(val) {
-
+              console.log("val is " + val);
               var TSR = 4+val/100*4;
               document.getElementById("message1").innerHTML = "Tip speed ratio = " +TSR.toFixed(2);
               var r_Array = createArraySequence(0.2,0.01,1);
@@ -529,7 +529,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             <h2>Example of BEM solution of $F_{axial}$ and $F_{azim}$, rotor loading and power. </h2>
             <div  style="width: 100%; float:left "; >
             <p style ='text-align: center'>  Scroll the button below to change tip speed ratio. <span id="message_calculate_faxial_ftan_1"> Tip speed ratio = 6. </span> </p>
-            <input type="range" oninput="solveplotFaxial(this.value)">
+            <input type="range" onchange="solveplotFaxial(this.value)">
 
             </div>
             <div id="chart_calculate_faxial_ftan_1_BEM1" style="width: 600px; height: 400px; float: left"; ><!-- Plotly chart will be drawn inside this DIV --></div>
@@ -581,7 +581,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 <h2>Example of BEM solution of bound circulation $\Gamma$. </h2>
                 <div  style="width: 100%; float:left "; >
                 <p style ='text-align: center'>  Scroll the button below to change tip speed ratio. <span id="message_calculate_circulation_BEM1"> Tip speed ratio = 6. </span> </p>
-                <input type="range" oninput="solveplotCirculation(this.value)">
+                <input type="range" onchange="solveplotCirculation(this.value)">
 
                 </div>
                 <div id="chart_calculate_circulation_BEM1" style="width: 600px; height: 400px; float: left"; ><!-- Plotly chart will be drawn inside this DIV --></div>
