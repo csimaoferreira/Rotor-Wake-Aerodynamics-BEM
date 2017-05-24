@@ -235,6 +235,7 @@ function solveStreamtube(Uinf, r1_R, r2_R, rootradius_R, tipradius_R , Omega, Ra
     // correct new axial induction with Prandtl's correction
     Prandtl=calculatePrandtlTipRootCorrection(r_R, rootradius_R, tipradius_R, Omega*Radius/Uinf, NBlades, anew);
     if (Prandtl.Ftotal < 0.0001) { Prandtl.Ftotal = 0.0001; } // avoid divide by zero
+
     anew = anew/Prandtl.Ftotal; // correct estimate of axial induction
     a = 0.75*a+0.25*anew; // for improving convergence, weigh current and previous iteration of axial induction
     // calculate aximuthal induction
